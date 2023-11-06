@@ -2,6 +2,8 @@ package com.cpsc333fa23.gc7
 
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.GridLayout
@@ -19,6 +21,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
     private lateinit var playAgainButton: Button
     private lateinit var matchButton: Button
     private lateinit var game: Memory
+    private lateinit var default_icon: String
 
     override fun onWinConditionClick(choice: Boolean){
         if (choice)
@@ -39,6 +42,10 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        default_icon = resources.getString(R.string.default_card_icon)
+
+        registerForContextMenu(findViewById(R.id.game_title))
 
         Log.d(TAG, "onCreate")
 
@@ -134,6 +141,45 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
         //endregion code body
     }
 
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        v: View?,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        menuInflater.inflate(R.menu.default_card_menu, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val currentDefaultIcon = default_icon
+        return when (item.itemId){
+            R.id.default_card1 -> {
+                default_icon = resources.getString(R.string.default_card_icon)
+                updateBoardDefaultIcon(currentDefaultIcon)
+                true
+            }
+            R.id.default_card2 -> {
+                default_icon = resources.getString(R.string.default_card_icon_2)
+                updateBoardDefaultIcon(currentDefaultIcon)
+                true
+            }
+            R.id.default_card3 -> {
+                default_icon = resources.getString(R.string.default_card_icon_3)
+                updateBoardDefaultIcon(currentDefaultIcon)
+                true
+            }
+            else -> return super.onContextItemSelected(item)
+        }
+    }
+
+    private fun updateBoardDefaultIcon(currentDefaultIcon: String) {
+        val cards = getCardViews()
+        for (card in cards){
+            if (card.text == currentDefaultIcon)
+                card.text = default_icon
+        }
+    }
+
     /**
      * The function onSaveInstanceState in Kotlin is used to save the state of a game, including the
      * total number of matches, the matches, the current pair, the board, the matches left, the
@@ -221,7 +267,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
                     continue
                 }
                 else {
-                    card.text = resources.getString(R.string.default_card_icon)
+                    card.text = default_icon
                     i++
                 }
             }
@@ -232,7 +278,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
 
             val clickedCardTextView = view as TextView
 
-            if (clickedCardTextView.text.toString() == getString(R.string.default_card_icon)){
+            if (clickedCardTextView.text.toString() == default_icon){
                 //for debugging purposes, prints out clicked id string rather than integer
                 //println(resources.getResourceEntryName(clickedCardTextView.id))
 
@@ -347,7 +393,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
         //reset each view
         val cardViews = getCardViews()
         for (card in cardViews){
-            card.text = resources.getString(R.string.default_card_icon)
+            card.text = default_icon
         }
         //hide button
         findViewById<Button>(R.id.play_again_button).visibility = View.INVISIBLE
