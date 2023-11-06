@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
     private lateinit var playAgainButton: Button
     private lateinit var matchButton: Button
     private lateinit var game: Memory
-    private lateinit var default_icon: String
+    private lateinit var defaultIcon: String
 
     override fun onWinConditionClick(choice: Boolean){
         if (choice)
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        default_icon = resources.getString(R.string.default_card_icon)
+        defaultIcon = resources.getString(R.string.default_card_icon)
 
         registerForContextMenu(findViewById(R.id.game_title))
 
@@ -132,6 +132,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
 
             matchButton.text = savedInstanceState.getString("matchButtonText")
 
+            defaultIcon = savedInstanceState.getString("defaultIcon")!!
             //updateDebugTextView()
         }
         else {
@@ -151,20 +152,20 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        val currentDefaultIcon = default_icon
+        val currentDefaultIcon = defaultIcon
         return when (item.itemId){
             R.id.default_card1 -> {
-                default_icon = resources.getString(R.string.default_card_icon)
+                defaultIcon = resources.getString(R.string.default_card_icon)
                 updateBoardDefaultIcon(currentDefaultIcon)
                 true
             }
             R.id.default_card2 -> {
-                default_icon = resources.getString(R.string.default_card_icon_2)
+                defaultIcon = resources.getString(R.string.default_card_icon_2)
                 updateBoardDefaultIcon(currentDefaultIcon)
                 true
             }
             R.id.default_card3 -> {
-                default_icon = resources.getString(R.string.default_card_icon_3)
+                defaultIcon = resources.getString(R.string.default_card_icon_3)
                 updateBoardDefaultIcon(currentDefaultIcon)
                 true
             }
@@ -176,7 +177,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
         val cards = getCardViews()
         for (card in cards){
             if (card.text == currentDefaultIcon)
-                card.text = default_icon
+                card.text = defaultIcon
         }
     }
 
@@ -235,6 +236,8 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
         outState.putString("currentBoardState", cardListString)
 
         outState.putString("matchButtonText", matchButton.text.toString())
+
+        outState.putString("defaultIcon", defaultIcon)
     }
 
     /**
@@ -267,7 +270,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
                     continue
                 }
                 else {
-                    card.text = default_icon
+                    card.text = defaultIcon
                     i++
                 }
             }
@@ -278,7 +281,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
 
             val clickedCardTextView = view as TextView
 
-            if (clickedCardTextView.text.toString() == default_icon){
+            if (clickedCardTextView.text.toString() == defaultIcon){
                 //for debugging purposes, prints out clicked id string rather than integer
                 //println(resources.getResourceEntryName(clickedCardTextView.id))
 
@@ -393,7 +396,7 @@ class MainActivity : AppCompatActivity(), WinConditionDialogFragment.OnWinCondit
         //reset each view
         val cardViews = getCardViews()
         for (card in cardViews){
-            card.text = default_icon
+            card.text = defaultIcon
         }
         //hide button
         findViewById<Button>(R.id.play_again_button).visibility = View.INVISIBLE
